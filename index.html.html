@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vandhanaa weds Kaveesh</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@400;600;800&family=Dancing+Script:wght@600&family=Homemade+Apple&display=swap');
+
+        :root {
+            --bg-red: #b71c1c; 
+            --mailbox-red: #e53935;
+            --paper-color: #fdfbf7;
+            --text-gold: #ffd700;
+            --maroon-env: #800020; /* Maroon color for new envelope */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-red);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* SCENE 1: MAILBOX */
+        #scene-mailbox {
+            position: absolute;
+            z-index: 50;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-red);
+            transition: transform 1s ease-in-out;
+        }
+
+        .mailbox {
+            position: relative;
+            width: 220px;
+            height: 260px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .mailbox:hover { transform: scale(1.02); }
+
+        .mb-top {
+            width: 100%;
+            height: 80px;
+            background: #ff5252;
+            border-radius: 60px 60px 0 0;
+            border-bottom: 10px solid #d32f2f;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mb-body {
+            width: 100%;
+            height: 180px;
+            background: #ff5252;
+            border-radius: 0 0 10px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .mb-slot {
+            width: 160px;
+            height: 15px;
+            background: #b71c1c;
+            border-radius: 10px;
+            position: absolute;
+            top: 20px;
+        }
+
+        .mb-label {
+            margin-top: 40px;
+            color: white;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .click-text {
+            color: rgba(255,255,255,0.7);
+            margin-top: 30px;
+            font-size: 0.9rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* SCENE 2: POP OUT */
+        #scene-items {
+            position: absolute;
+            z-index: 40;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-red);
+            perspective: 1000px;
+        }
+
+        .item-ticket {
+            position: absolute;
+            left: 15%;
+            width: 140px;
+            height: 240px;
+            background: #fff;
+            transform: rotate(-15deg) translateY(100vh);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px dashed #ff5252;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .ticket-stub { border-bottom: 2px dashed #ff5252; width: 100%; text-align: center; padding: 10px 0; font-family: 'Courier Prime', monospace; font-weight: bold; color: #b71c1c; }
+        .ticket-body { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 10px; }
+        .ticket-body h3 { margin: 0; font-size: 2rem; color: #b71c1c; font-family: 'Poppins', sans-serif;}
+
+        .item-flowers {
+            position: absolute;
+            right: 15%;
+            width: 200px;
+            height: auto;
+            transform: rotate(15deg) translateY(100vh);
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
+        }
+        .item-flowers img { width: 100%; height: auto; display: block; }
+
+        .item-card-center {
+            position: relative;
+            width: 300px;
+            height: 240px;
+            background: #fcfcfc;
+            transform: translateY(100vh);
+            border-radius: 5px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .polaroid-img { width: 120px; height: 140px; background: white; padding: 8px 8px 30px 8px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); transform: rotate(-3deg); }
+        .polaroid-img img { width: 100%; height: 100%; object-fit: cover; }
+        .card-text { flex: 1; font-family: 'Homemade Apple', cursive; color: #333; font-size: 0.9rem; line-height: 1.6; }
+        .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #b71c1c; margin-bottom: 10px; }
+        .drawn-heart { position: absolute; top: -20px; left: -20px; font-size: 4rem; color: #b71c1c; opacity: 0.8; font-family: 'Dancing Script', cursive; transform: rotate(-20deg); }
+
+        /* SCENE 3: ORDER PAGE */
+        #scene-order {
+            position: absolute;
+            z-index: 30;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-red);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .order-text { color: white; font-size: 1.1rem; max-width: 80%; margin-bottom: 30px; }
+        .bouquet-container { position: relative; width: 300px; height: 350px; margin-bottom: 30px; }
+        .bouquet-bg { width: 100%; height: 100%; object-fit: contain; }
+        .yes-btn { background-color: white; color: #b71c1c; border: none; padding: 12px 40px; font-weight: bold; border-radius: 30px; cursor: pointer; transition: 0.2s; }
+        .yes-btn:hover { transform: scale(1.05); }
+
+        /* SCENE 4: ALL ORDERS */
+        #scene-all-orders {
+            position: absolute;
+            z-index: 20;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-red);
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            overflow-y: auto;
+        }
+
+        .orders-list-card {
+            background-color: white;
+            padding: 30px;
+            width: 85%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: left;
+        }
+
+        .order-item { margin: 10px 0; font-size: 0.9rem; color: #333; }
+        .important-order { margin-top: 15px; color: #b71c1c; font-weight: 700; text-align: center; font-style: italic; }
+        .next-btn { margin-top: 25px; width: 100%; background-color: #b71c1c; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+        /* SCENE 6: MAROON ENVELOPE & LINED PAPER LETTER */
+        #scene-personal-letter {
+            position: absolute;
+            z-index: 60;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8c8d3; /* Soft pink background */
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 350px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            cursor: pointer;
+        }
+
+        /* Maroon Envelope Shape */
+        .maroon-envelope {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: #800020;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0, 50% 45%);
+        }
+
+        /* Full Screen Lined Paper Letter */
+        .personal-letter-body {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            max-width: 600px;
+            height: 0%;
+            /* Lined paper effect */
+            background: #fffef0;
+            background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
+            background-size: 100% 2.5rem;
+            padding: 0px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.2);
+            z-index: 5;
+            transition: all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+            transform: translate(-50%, -50%);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            line-height: 2.5rem; /* Matches line height for alignment */
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .personal-letter-body.active {
+            width: 95%;
+            height: 90%;
+            padding: 50px 30px;
+            opacity: 1;
+            visibility: visible;
+            z-index: 30;
+        }
+
+        .letter-header {
+            color: #b71c1c;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .heart-icon {
+            display: block;
+            margin: 0 auto;
+            color: #b71c1c;
+            font-size: 1.5rem;
+        }
+
+        /* SCENE 5: NEWSPAPER */
+        #invitation-newspaper {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 5;
+            background: var(--bg-red);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .paper-container { width: 90%; max-width: 550px; background-color: var(--paper-color); padding: 30px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .header-section { border-bottom: 3px double #c0392b; border-top: 3px double #c0392b; padding: 10px 0; width: 100%; margin-bottom: 20px;}
+        h1.breaking-news { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #c0392b; margin: 5px 0; text-transform: uppercase; }
+        .meta-bar { display: flex; justify-content: space-between; border-top: 2px solid #c0392b; border-bottom: 2px solid #c0392b; padding: 5px 0; margin-bottom: 20px; font-family: 'Courier Prime', monospace; width: 100%;}
+        .ticket-badge { background-color: #c0392b; color: #fff; padding: 10px 25px; transform: rotate(-2deg); margin: 15px 0; border: 2px dashed #fff; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin: 20px 0; }
+        .photo-frame { border: 2px solid #c0392b; padding: 5px; background: rgba(255,255,255,0.5); }
+        .photo-placeholder { width: 100%; height: 140px; background: #ddd; overflow: hidden; }
+        .photo-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* MUSIC PLAYER STYLES */
+        #music-player-ui {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            border: 2px solid #b71c1c;
+        }
+
+        .play-pause-btn {
+            background: #b71c1c;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+
+    <div id="scene-mailbox" onclick="triggerItems()">
+        <div class="mailbox">
+            <div class="mb-top"></div>
+            <div class="mb-body">
+                <div class="mb-slot"></div>
+                <div class="mb-label">Mailbox</div>
+            </div>
+        </div>
+        <div class="click-text">Tap to check mail</div>
+    </div>
+
+    <div id="scene-items">
+        <div class="item-ticket" id="ticket">
+            <div class="ticket-stub">ADMITS ONE</div>
+            <div class="ticket-body">
+                <p>FEB</p>
+                <h3>14</h3>
+                <p>2026</p>
+                <div style="margin-top:auto; font-size:2rem;">♥</div>
+            </div>
+        </div>
+        <div class="item-flowers" id="flowers">
+            <img src="https://cdn-icons-png.flaticon.com/512/886/886737.png" alt="Flowers">
+        </div>
+        <div class="item-card-center" id="card" onclick="openOrderPage()">
+            <div class="drawn-heart">♡</div>
+            <div class="polaroid-img"><img src="bride.jpg"></div>
+            <div class="card-text">
+                <div class="card-title">Happy Valentine's day</div>
+                Babyyy!!! I love you so much. Let meet soon and this long distance ends.
+                <br><br><small>[Click to Open]</small>
+            </div>
+        </div>
+    </div>
+
+    <div id="scene-order">
+        <div class="order-text">"I won't ask if you'll be my Valentine... I need to know if you'll follow my orders from this day."</div>
+        <div class="bouquet-container"><img src="bouquet.png" class="bouquet-bg"></div>
+        <button class="yes-btn" onclick="openAllOrders()">Yes, I will follow orders! 🫡</button>
+    </div>
+
+    <div id="scene-all-orders">
+        <div class="orders-list-card">
+            <h2>The Orders 📜</h2>
+            <div class="order-item">🍽️ Eat properly, no cap</div>
+            <div class="order-item">😴 Sleep well, smh</div>
+            <div class="order-item">🧘‍♂️ Stress less, okie?</div>
+            <div class="order-item">🚫 No blame games</div>
+            <div class="order-item">💧 Stay hydrated</div>
+            <div class="order-item">🫶 Check yourself</div>
+            <div class="order-item">😂 Laugh more, fr</div>
+            <div class="order-item">🧠 Don't ghost your brain</div>
+            <div class="order-item">💖 Flex self-love</div>
+            <div class="order-item">💌 Hit me up with feels</div>
+            <div class="important-order">Take care of yourself till I reach you 💕</div>
+            
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.8rem;">
+                <input type="checkbox" id="agree-checkbox" onchange="toggleNextBtn()" style="accent-color: #b71c1c;">
+                I agree to follow all these orders.
+            </label>
+            <button class="next-btn" id="final-next-btn" onclick="openLetterScene()" disabled style="opacity: 0.5; cursor: not-allowed;">I promise! 💍</button>
+        </div>
+    </div>
+
+    <div id="scene-personal-letter">
+        <div class="envelope-wrapper" onclick="toggleLetter()">
+            <div class="maroon-envelope"></div>
+        </div>
+        <div id="personal-letter" class="personal-letter-body">
+            <span class="heart-icon">❤️</span>
+            <div class="letter-header">Hey Love,</div>
+            <strong>Kaveesh,</strong><br>
+            I don’t even know where to start, so I’m just picking random sentences please don’t mind me. I wanna tell you so much about what’s going on in my day-to-day. I’ve always felt like you should be the first person I share my thoughts and decisions with, and I wanna hear yours too. I know sometimes I might shout or blabber whatever’s in my head, if in that case just leave me 2 mins, not more than 2 mins. please stay chill (optional).<br>
+            We haven’t fought this much before, and even though things have been kinda messy, my love for you hasn’t changed it’s just grown in different ways. I hope that by next Valentine’s, we’re close enough to actually vibe in person. I’m longing for you for touching your face, holding your hands, wiping your tears, going on walks, hopping on bike rides, sharing cute little romantic moments, and making memories that are 100% ours.<br>
+            I promise I’ll try not to make you cry, and I just want us to vibe, laugh, and love harder every day.<br>
+            Happy Valentine’s Day, baby ❤️ I love you more than you know and definitely more than anyone else ever could but not more than you. Counting down the moments till I get to be with you 💖.
+            <br><br>
+            <button onclick="showFinalNewspaper()" style="background:#b71c1c; color:white; border:none; padding:15px; width:100%; border-radius:5px; cursor:pointer; font-family:'Poppins';">Next →</button>
+        </div>
+        <p id="env-hint" style="color: #800020; margin-top: 30px; font-family: 'Courier Prime'; font-size: 0.8rem; font-weight:bold;">Tap the envelope to read</p>
+    </div>
+    
+
+    <div id="invitation-newspaper">
+        <div class="paper-container">
+            <div class="header-section"><h1 class="breaking-news">Breaking News</h1></div>
+            <div class="meta-bar"><span>2027</span><span>EXTRA SPECIAL</span><span>2027</span></div>
+            <div class="ticket-badge"><h2>VANDHANAA WEDS KAVEESH</h2></div>
+            <div class="details-grid">
+                <div class="photo-frame"><div class="photo-placeholder"><img src="v.jpg"></div></div>
+                <div class="photo-frame"><div class="photo-placeholder"><img src="k.jpg"></div></div>
+            </div>
+            <p>FEBRUARY 14TH, 2027 | HEARTS & ROSES CHAPEL</p>
+            <div class="main-text">“No cap, we’re getting married. Pull up!”</div>
+
+            <div style="margin-top: 30px; font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: #b71c1c; border-top: 1px dashed #c0392b; width: 100%; padding-top: 15px;">
+                By Vandhanaa Kaveesh
+            </div>
+        </div>
+    </div>
+
+    <audio id="saayali-audio" loop><source src="saayali.mp3" type="audio/mpeg"></audio>
+    <div id="music-player-ui">
+        <span style="font-size: 0.7rem; color: #b71c1c; font-weight: bold;">Saayali 🎵</span>
+        <button class="play-pause-btn" onclick="toggleMusic()">II</button>
+    </div>
+
+    <script>
+        const song = document.getElementById('saayali-audio');
+        const ui = document.getElementById('music-player-ui');
+
+        function toggleMusic() {
+            const btn = document.querySelector('.play-pause-btn');
+            if (song.paused) { song.play(); btn.innerText = "II"; } 
+            else { song.pause(); btn.innerText = "▶"; }
+        }
+
+        function toggleNextBtn() {
+            const btn = document.getElementById('final-next-btn');
+            const isChecked = document.getElementById('agree-checkbox').checked;
+            btn.disabled = !isChecked;
+            btn.style.opacity = isChecked ? "1" : "0.5";
+            btn.style.cursor = isChecked ? "pointer" : "not-allowed";
+        }
+
+        function triggerItems() {
+            document.getElementById('scene-mailbox').style.transform = "translateY(100vh)";
+            document.getElementById('scene-items').style.display = "flex";
+            setTimeout(() => {
+                document.getElementById('ticket').style.transform = "rotate(-15deg) translateY(0)";
+                document.getElementById('card').style.transform = "translateY(0)";
+                document.getElementById('flowers').style.transform = "rotate(15deg) translateY(0)";
+            }, 300);
+        }
+        
+
+        function openOrderPage() {
+            const items = document.getElementById('scene-items');
+            items.style.opacity = '0';
+            setTimeout(() => {
+                items.style.display = 'none';
+                const order = document.getElementById('scene-order');
+                order.style.display = 'flex';
+                setTimeout(() => order.style.opacity = '1', 50);
+            }, 500);
+        }
+
+        function openAllOrders() {
+            const order = document.getElementById('scene-order');
+            order.style.opacity = '0';
+            setTimeout(() => {
+                order.style.display = 'none';
+                const list = document.getElementById('scene-all-orders');
+                list.style.display = 'flex';
+                setTimeout(() => list.style.opacity = '1', 50);
+            }, 500);
+        }
+
+        function openLetterScene() {
+            const list = document.getElementById('scene-all-orders');
+            list.style.opacity = '0';
+            setTimeout(() => {
+                list.style.display = 'none';
+                const scene = document.getElementById('scene-personal-letter');
+                scene.style.display = 'flex';
+                setTimeout(() => {
+                    scene.style.opacity = '1';
+                    ui.style.display = 'flex';
+                    song.play(); 
+                }, 50);
+            }, 500);
+        }
+
+        function toggleLetter() {
+            document.getElementById('personal-letter').classList.toggle('active');
+            document.getElementById('env-hint').style.display = 'none';
+        }
+
+        function showFinalNewspaper() {
+            const scene = document.getElementById('scene-personal-letter');
+            scene.style.opacity = '0';
+            setTimeout(() => {
+                scene.style.display = 'none';
+                const paper = document.getElementById('invitation-newspaper');
+                paper.style.display = 'flex';
+                setTimeout(() => paper.style.opacity = '1', 50);
+            }, 500);
+        
+        }
+
+    </script>
+</body>
+</html>
